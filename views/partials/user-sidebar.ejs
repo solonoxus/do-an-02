@@ -1,0 +1,26 @@
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Tài khoản của tôi</h5>
+    </div>
+    <div class="list-group list-group-flush">
+        <a href="/users/profile"
+            class="list-group-item list-group-item-action <%= path === '/users/profile' ? 'active' : '' %>">
+            <i class="fas fa-user me-2"></i> Thông tin tài khoản
+        </a>
+        <a href="/users/orders"
+            class="list-group-item list-group-item-action <%= path === '/users/orders' ? 'active' : '' %>">
+            <i class="fas fa-shopping-bag me-2"></i> Đơn hàng của tôi
+        </a>
+        <a href="/users/wishlist"
+            class="list-group-item list-group-item-action <%= path === '/users/wishlist' ? 'active' : '' %>">
+            <i class="fas fa-heart me-2"></i> Sản phẩm yêu thích
+        </a>
+        <a href="/users/change-password"
+            class="list-group-item list-group-item-action <%= path === '/users/change-password' ? 'active' : '' %>">
+            <i class="fas fa-key me-2"></i> Đổi mật khẩu
+        </a>
+        <a href="/users/logout" class="list-group-item list-group-item-action text-danger">
+            <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+        </a>
+    </div>
+</div>

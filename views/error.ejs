@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Đã xảy ra lỗi</h4>
+                    </div>
+                    <div class="card-body">
+                        <% if (error) { %>
+                            <h5 class="card-title">
+                                <%= error.message || 'Đã xảy ra lỗi server' %>
+                            </h5>
+                            <% if (process.env.NODE_ENV !=='production' ) { %>
+                                <div class="alert alert-secondary">
+                                    <pre><%= error.stack %></pre>
+                                </div>
+                                <% } %>
+                                    <% } else { %>
+                                        <h5 class="card-title">Đã xảy ra lỗi không xác định</h5>
+                                        <% } %>
+                                            <hr>
+                                            <p>Vui lòng thử lại sau hoặc liên hệ quản trị viên nếu lỗi vẫn tiếp tục xảy
+                                                ra.</p>
+                                            <a href="javascript:history.back()" class="btn btn-secondary">
+                                                <i class="fas fa-arrow-left"></i> Quay lại
+                                            </a>
+                                            <a href="/" class="btn btn-primary">
+                                                <i class="fas fa-home"></i> Về trang chủ
+                                            </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

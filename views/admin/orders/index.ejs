@@ -1,0 +1,136 @@
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="h3 mb-0 text-gray-800">Quản Lý Đơn Hàng</h2>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Bộ lọc</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="/admin/orders" class="row g-3">
+                <div class="col-md-6">
+                    <select name="status" class="form-select">
+                        <option value="all">Tất cả trạng thái</option>
+                        <% orderStatuses.forEach(status=> { %>
+                            <option value="<%= status %>" <%=(query.status===status) ? 'selected' : '' %>>
+                                <%= status==='pending' ? 'Chờ xác nhận' : status==='processing' ? 'Đang xử lý' :
+                                    status==='shipped' ? 'Đang giao hàng' : status==='delivered' ? 'Đã giao hàng'
+                                    : 'Đã hủy' %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-primary">Lọc</button>
+                    <a href="/admin/orders" class="btn btn-secondary">Xóa bộ lọc</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Orders List -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Danh sách đơn hàng</h5>
+            <span>Tổng số: <%= totalOrders %></span>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Khách hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Thanh toán</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if(orders && orders.length> 0) { %>
+                            <% orders.forEach(order=> { %>
+                                <tr>
+                                    <td>
+                                        <%= order._id.toString().substring(0, 8) %>...
+                                    </td>
+                                    <td>
+                                        <%= order.user ? order.user.name : 'Không xác định' %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(order.createdAt).toLocaleString('vi-VN') %>
+                                    </td>
+                                    <td>
+                                        <%= order.totalAmount.toLocaleString('vi-VN') %>đ
+                                    </td>
+                                    <td>
+                                        <span class="badge <%= 
+                                            order.status === 'pending' ? 'bg-warning' : 
+                                            order.status === 'processing' ? 'bg-info' : 
+                                            order.status === 'shipped' ? 'bg-primary' : 
+                                            order.status === 'delivered' ? 'bg-success' : 'bg-danger' 
+                                        %>">
+                                            <%= order.status==='pending' ? 'Chờ xác nhận' : order.status==='processing'
+                                                ? 'Đang xử lý' : order.status==='shipped' ? 'Đang giao hàng' :
+                                                order.status==='delivered' ? 'Đã giao hàng' : 'Đã hủy' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge <%= order.paymentStatus === 'pending' ? 'bg-warning' : 'bg-success' %>">
+                                            <%= order.paymentStatus==='pending' ? 'Chưa thanh toán' : 'Đã thanh toán' %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i> Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="7" class="text-center">Không có đơn hàng nào.</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <% if (totalPages> 1) { %>
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="/admin/orders?page=<%= currentPage - 1 %><%= query.status ? `&status=${query.status}` : '' %>">Trước</a>
+                            </li>
+                            <% } %>
+
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link"
+                                            href="/admin/orders?page=<%= i %><%= query.status ? `&status=${query.status}` : '' %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="/admin/orders?page=<%= currentPage + 1 %><%= query.status ? `&status=${query.status}` : '' %>">Tiếp</a>
+                                            </li>
+                                            <% } %>
+                    </ul>
+                </nav>
+                <% } %>
+        </div>
+    </div>
+</div>

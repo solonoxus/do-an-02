@@ -1,0 +1,289 @@
+<!-- Hero Banner -->
+<div class="hero-carousel">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="hero-banner-img" style="background-image: url('/images/hero-banner.jpg');"></div>
+                <div class="carousel-caption text-start">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h1 class="display-4 fw-bold fade-in-up">Công Nghệ Hiện Đại</h1>
+                                <p class="lead fade-in-up delay-1">Khám phá những sản phẩm công nghệ mới nhất tại
+                                    SellShop.</p>
+                                <a href="/products/category/dien-thoai"
+                                    class="btn btn-primary btn-lg fade-in-up delay-2">Khám phá ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-banner-img" style="background-image: url('/images/promo-banner.jpg');"></div>
+                <div class="carousel-caption text-start">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h1 class="display-4 fw-bold fade-in-up">Ưu Đãi Đặc Biệt</h1>
+                                <p class="lead fade-in-up delay-1">Giảm giá lên đến 50% cho các sản phẩm hot nhất mùa
+                                    này!</p>
+                                <a href="/products?sort=discount_desc"
+                                    class="btn btn-danger btn-lg fade-in-up delay-2">Xem ưu đãi</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="hero-banner-img"
+                    style="background-image: url('https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=1200&q=80');">
+                </div>
+                <div class="carousel-caption text-start">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h1 class="display-4 fw-bold fade-in-up">Sản Phẩm Mới</h1>
+                                <p class="lead fade-in-up delay-1">Trải nghiệm những sản phẩm mới nhất từ các thương
+                                    hiệu hàng đầu.</p>
+                                <a href="/products?sort=newest" class="btn btn-success btn-lg fade-in-up delay-2">Xem
+                                    ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<!-- Danh mục nổi bật -->
+<section class="featured-categories mb-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Danh mục nổi bật</h2>
+
+        <div class="row">
+            <% if(typeof featuredCategories !=='undefined' && featuredCategories.length> 0) { %>
+                <% featuredCategories.forEach(category=> { %>
+                    <div class="col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100">
+                            <% if(category.image) { %>
+                                <img src="<%= category.image %>" class="card-img-top" alt="<%= category.name %>">
+                                <% } else { %>
+                                    <div class="bg-light text-center py-4">
+                                        <i class="fas fa-box fa-4x text-muted"></i>
+                                    </div>
+                                    <% } %>
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">
+                                                <%= category.name %>
+                                            </h5>
+                                            <% if(category.description) { %>
+                                                <p class="card-text text-muted">
+                                                    <%= category.description.substring(0, 80) %>
+                                                        <%= category.description.length> 80 ? '...' : '' %>
+                                                </p>
+                                                <% } %>
+                                                    <a href="/products/category/<%= category.slug %>"
+                                                        class="btn btn-outline-primary">Xem sản phẩm</a>
+                                        </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="col-12 text-center">
+                                <p>Không có danh mục nổi bật nào.</p>
+                            </div>
+                            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Sản phẩm nổi bật -->
+<section class="featured-products mb-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Sản phẩm nổi bật</h2>
+
+        <div class="row">
+            <% if(typeof featuredProducts !=='undefined' && featuredProducts.length> 0) { %>
+                <% featuredProducts.forEach(product=> { %>
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card product-card h-100">
+                            <div class="product-img-container">
+                                <img src="<%= product.mainImage %>" class="card-img-top" alt="<%= product.name %>">
+                                <% if(product.salePrice && product.salePrice < product.price) { %>
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Giảm giá</span>
+                                    <% } %>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title product-title">
+                                    <%= product.name %>
+                                </h5>
+                                <p class="card-text text-muted small mb-2">
+                                    <%= product.category.name %>
+                                </p>
+                                <div class="mb-2">
+                                    <% if(product.salePrice && product.salePrice < product.price) { %>
+                                        <span class="text-danger fw-bold">
+                                            <%= product.salePrice.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <span class="text-muted text-decoration-line-through ms-2">
+                                            <%= product.price.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <% } else { %>
+                                            <span class="fw-bold">
+                                                <%= product.price.toLocaleString('vi-VN') %>đ
+                                            </span>
+                                            <% } %>
+                                </div>
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <a href="/products/<%= product.slug %>" class="btn btn-sm btn-outline-primary">Chi
+                                        tiết</a>
+                                    <form action="/cart/add" method="POST">
+                                        <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <input type="hidden" name="redirect" value="/">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="col-12 text-center">
+                                <p>Không có sản phẩm nổi bật nào.</p>
+                            </div>
+                            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Sản phẩm mới nhất -->
+<section class="new-products mb-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Sản phẩm mới nhất</h2>
+
+        <div class="row">
+            <% if(typeof newProducts !=='undefined' && newProducts.length> 0) { %>
+                <% newProducts.forEach(product=> { %>
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card product-card h-100">
+                            <div class="product-img-container">
+                                <img src="<%= product.mainImage %>" class="card-img-top" alt="<%= product.name %>">
+                                <% if(product.salePrice && product.salePrice < product.price) { %>
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Giảm giá</span>
+                                    <% } %>
+                                        <span class="badge bg-success position-absolute top-0 end-0 m-2">Mới</span>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title product-title">
+                                    <%= product.name %>
+                                </h5>
+                                <p class="card-text text-muted small mb-2">
+                                    <%= product.category.name %>
+                                </p>
+                                <div class="mb-2">
+                                    <% if(product.salePrice && product.salePrice < product.price) { %>
+                                        <span class="text-danger fw-bold">
+                                            <%= product.salePrice.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <span class="text-muted text-decoration-line-through ms-2">
+                                            <%= product.price.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <% } else { %>
+                                            <span class="fw-bold">
+                                                <%= product.price.toLocaleString('vi-VN') %>đ
+                                            </span>
+                                            <% } %>
+                                </div>
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <a href="/products/<%= product.slug %>" class="btn btn-sm btn-outline-primary">Chi
+                                        tiết</a>
+                                    <form action="/cart/add" method="POST">
+                                        <input type="hidden" name="productId" value="<%= product._id %>">
+                                        <input type="hidden" name="redirect" value="/">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="col-12 text-center">
+                                <p>Không có sản phẩm mới nào.</p>
+                            </div>
+                            <% } %>
+        </div>
+    </div>
+</section>
+
+<!-- Banner quảng cáo -->
+<section class="promo-banner py-5 bg-light mb-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2>Ưu đãi đặc biệt</h2>
+                <p class="lead">Giảm giá lên đến 50% cho các sản phẩm hot nhất mùa này!</p>
+                <a href="/products?sort=price_asc" class="btn btn-primary">Xem ngay</a>
+            </div>
+            <div class="col-md-6">
+                <img src="/images/promo-banner.jpg" alt="Khuyến mãi" class="img-fluid rounded">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Ưu điểm của shop -->
+<section class="services-section mb-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Tại sao chọn chúng tôi?</h2>
+
+        <div class="row">
+            <div class="col-md-3 col-6 mb-4">
+                <div class="service-item">
+                    <img src="/images/icon-shipping.png" alt="Giao hàng nhanh" class="service-icon">
+                    <h5 class="service-title">Giao hàng nhanh</h5>
+                    <p class="service-description">Miễn phí giao hàng cho đơn từ 500K. Nhận hàng trong 24h</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="service-item">
+                    <img src="/images/icon-warranty.png" alt="Bảo hành tốt" class="service-icon">
+                    <h5 class="service-title">Bảo hành tốt</h5>
+                    <p class="service-description">Đổi trả sản phẩm trong vòng 30 ngày không cần lý do</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="service-item">
+                    <img src="/images/icon-payment.png" alt="Thanh toán an toàn" class="service-icon">
+                    <h5 class="service-title">Thanh toán an toàn</h5>
+                    <p class="service-description">Nhiều phương thức thanh toán an toàn và tiện lợi</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="service-item">
+                    <img src="/images/icon-support.png" alt="Hỗ trợ 24/7" class="service-icon">
+                    <h5 class="service-title">Hỗ trợ 24/7</h5>
+                    <p class="service-description">Đội ngũ hỗ trợ sẵn sàng giúp đỡ bạn mọi lúc mọi nơi</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

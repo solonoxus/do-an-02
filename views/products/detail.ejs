@@ -1,0 +1,298 @@
+<div class="row">
+    <!-- Hình ảnh sản phẩm -->
+    <div class="col-md-5 mb-4">
+        <div class="product-images product-img-gallery">
+            <!-- Ảnh chính -->
+            <div class="main-image-container mb-3">
+                <img src="<%= product.mainImage %>" alt="<%= product.name %>" class="product-detail-img" id="mainImage">
+            </div>
+
+            <!-- Các ảnh khác -->
+            <% if(product.images && product.images.length> 1) { %>
+                <div class="product-thumbnails">
+                    <% product.images.forEach(image=> { %>
+                        <div class="product-thumbnail-item" onclick="changeMainImage('<%= image %>')">
+                            <img src="<%= image %>" alt="<%= product.name %>" class="img-fluid">
+                        </div>
+                        <% }); %>
+                </div>
+                <% } %>
+        </div>
+    </div>
+
+    <!-- Thông tin sản phẩm -->
+    <div class="col-md-7">
+        <h1 class="mb-2">
+            <%= product.name %>
+        </h1>
+
+        <!-- Danh mục -->
+        <p class="mb-2">
+            <a href="/products/category/<%= product.category.slug %>" class="text-decoration-none text-muted">
+                <i class="fas fa-tag"></i>
+                <%= product.category.name %>
+            </a>
+        </p>
+
+        <!-- Đánh giá -->
+        <div class="mb-3">
+            <% if(product.averageRating> 0) { %>
+                <% for(let i=1; i <=5; i++) { %>
+                    <i class="<%= i <= Math.round(product.averageRating) ? 'fas' : 'far' %> fa-star text-warning"></i>
+                    <% } %>
+                        <span class="ms-1">
+                            <%= product.averageRating.toFixed(1) %>/5
+                        </span>
+                        <span class="text-muted">(<%= product.ratings.length %> đánh giá)</span>
+                        <% } else { %>
+                            <span class="text-muted">Chưa có đánh giá</span>
+                            <% } %>
+        </div>
+
+        <!-- Giá -->
+        <div class="mb-3">
+            <% if(product.salePrice && product.salePrice < product.price) { %>
+                <div class="d-flex align-items-center">
+                    <h3 class="text-danger mb-0">
+                        <%= product.salePrice.toLocaleString('vi-VN') %>đ
+                    </h3>
+                    <span class="text-muted text-decoration-line-through ms-3">
+                        <%= product.price.toLocaleString('vi-VN') %>đ
+                    </span>
+                    <span class="badge bg-danger ms-3">-<%= Math.round((1 - product.salePrice / product.price) * 100) %>
+                            %</span>
+                </div>
+                <% } else { %>
+                    <h3 class="mb-0">
+                        <%= product.price.toLocaleString('vi-VN') %>đ
+                    </h3>
+                    <% } %>
+        </div>
+
+        <!-- Trạng thái tồn kho -->
+        <div class="mb-4">
+            <% if(product.stock> 0) { %>
+                <span class="text-success"><i class="fas fa-check-circle"></i> Còn hàng</span>
+                <span class="text-muted">(<%= product.stock %> sản phẩm)</span>
+                <% } else { %>
+                    <span class="text-danger"><i class="fas fa-times-circle"></i> Hết hàng</span>
+                    <% } %>
+        </div>
+
+        <!-- Form thêm vào giỏ hàng -->
+        <% if(product.stock> 0) { %>
+            <form action="/cart/add" method="POST" class="mb-4">
+                <input type="hidden" name="productId" value="<%= product._id %>">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="quantity" class="col-form-label">Số lượng:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1"
+                            max="<%= product.stock %>">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ hàng
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <% } else { %>
+                <button class="btn btn-secondary mb-4" disabled>
+                    <i class="fas fa-cart-plus me-1"></i> Hết hàng
+                </button>
+                <% } %>
+
+                    <!-- Nút thêm vào yêu thích -->
+                    <form action="/products/<%= product._id %>/wishlist" method="POST" class="d-inline">
+                        <input type="hidden" name="redirect" value="/products/<%= product.slug %>">
+                        <button type="submit" class="btn <%= isInWishlist ? 'btn-danger' : 'btn-outline-danger' %>">
+                            <i class="<%= isInWishlist ? 'fas' : 'far' %> fa-heart me-1"></i>
+                            <%= isInWishlist ? 'Đã yêu thích' : 'Thêm vào yêu thích' %>
+                        </button>
+                    </form>
+
+                    <!-- Mô tả sản phẩm -->
+                    <div class="mt-4">
+                        <h4>Mô tả sản phẩm</h4>
+                        <div class="product-description">
+                            <%= product.description %>
+                        </div>
+                    </div>
+
+                    <!-- Thông số kỹ thuật -->
+                    <% if(product.specifications && Object.keys(product.specifications).length> 0) { %>
+                        <div class="mt-4">
+                            <h4>Thông số kỹ thuật</h4>
+                            <table class="table table-striped">
+                                <tbody>
+                                    <% for(const [key, value] of Object.entries(product.specifications)) { %>
+                                        <tr>
+                                            <th style="width: 30%">
+                                                <%= key %>
+                                            </th>
+                                            <td>
+                                                <%= value %>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+    </div>
+</div>
+
+<!-- Đánh giá sản phẩm -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h4>Đánh giá sản phẩm</h4>
+
+        <!-- Form đánh giá (chỉ hiển thị khi đăng nhập) -->
+        <% if(user) { %>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form action="/products/<%= product._id %>/review" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Đánh giá của bạn:</label>
+                            <div class="rating-stars">
+                                <% for(let i=5; i>= 1; i--) { %>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="rating" id="rating<%= i %>"
+                                            value="<%= i %>" required>
+                                        <label class="form-check-label" for="rating<%= i %>">
+                                            <% for(let j=1; j <=5; j++) { %>
+                                                <i class="<%= j <= i ? 'fas' : 'far' %> fa-star text-warning"></i>
+                                                <% } %>
+                                        </label>
+                                    </div>
+                                    <% } %>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="review" class="form-label">Nhận xét:</label>
+                            <textarea class="form-control" id="review" name="review" rows="3"
+                                placeholder="Viết nhận xét của bạn..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                    </form>
+                </div>
+            </div>
+            <% } else { %>
+                <div class="alert alert-info mb-4">
+                    <a href="/users/login">Đăng nhập</a> để đánh giá sản phẩm này.
+                </div>
+                <% } %>
+
+                    <!-- Danh sách đánh giá -->
+                    <% if(product.ratings && product.ratings.length> 0) { %>
+                        <div class="list-group">
+                            <% product.ratings.forEach(rating=> { %>
+                                <div class="list-group-item border-1">
+                                    <div class="d-flex justify-content-between">
+                                        <h6>
+                                            <%= rating.user.name %>
+                                        </h6>
+                                        <small class="text-muted">
+                                            <%= new Date(rating.date).toLocaleDateString('vi-VN') %>
+                                        </small>
+                                    </div>
+                                    <div class="mb-2">
+                                        <% for(let i=1; i <=5; i++) { %>
+                                            <i
+                                                class="<%= i <= rating.rating ? 'fas' : 'far' %> fa-star text-warning"></i>
+                                            <% } %>
+                                    </div>
+                                    <p class="mb-0">
+                                        <%= rating.review %>
+                                    </p>
+                                </div>
+                                <% }); %>
+                        </div>
+                        <% } else { %>
+                            <div class="alert alert-light text-center">
+                                Chưa có đánh giá nào cho sản phẩm này.
+                            </div>
+                            <% } %>
+    </div>
+</div>
+
+<!-- Sản phẩm liên quan -->
+<% if(relatedProducts && relatedProducts.length> 0) { %>
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4>Sản phẩm tương tự</h4>
+            <div class="row related-products">
+                <% relatedProducts.forEach(related=> { %>
+                    <div class="col-md-3 col-sm-6 mb-4">
+                        <div class="card product-card h-100">
+                            <div class="product-img-container">
+                                <img src="<%= related.mainImage %>" class="card-img-top" alt="<%= related.name %>">
+                                <% if(related.salePrice && related.salePrice < related.price) { %>
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">Giảm giá</span>
+                                    <% } %>
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title product-title">
+                                    <%= related.name %>
+                                </h5>
+                                <p class="card-text text-muted small mb-2">
+                                    <%= related.category.name %>
+                                </p>
+                                <div class="mb-2">
+                                    <% if(related.salePrice && related.salePrice < related.price) { %>
+                                        <span class="text-danger fw-bold">
+                                            <%= related.salePrice.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <span class="text-muted text-decoration-line-through ms-2">
+                                            <%= related.price.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <% } else { %>
+                                            <span class="fw-bold">
+                                                <%= related.price.toLocaleString('vi-VN') %>đ
+                                            </span>
+                                            <% } %>
+                                </div>
+                                <div class="d-flex justify-content-between mt-auto">
+                                    <a href="/products/<%= related.slug %>" class="btn btn-sm btn-outline-primary">Chi
+                                        tiết</a>
+                                    <form action="/cart/add" method="POST">
+                                        <input type="hidden" name="productId" value="<%= related._id %>">
+                                        <input type="hidden" name="redirect" value="/products/<%= product.slug %>">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+        <script>
+            function changeMainImage(imageSrc) {
+                document.getElementById('mainImage').src = imageSrc;
+
+                const thumbnails = document.querySelectorAll('.product-thumbnail-item');
+                thumbnails.forEach(item => {
+                    const imgSrc = item.querySelector('img').src;
+                    if (imgSrc === imageSrc) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const firstThumbnail = document.querySelector('.product-thumbnail-item');
+                if (firstThumbnail) {
+                    firstThumbnail.classList.add('active');
+                }
+            });
+        </script>

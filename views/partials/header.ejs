@@ -1,0 +1,96 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="/images/temp-logo.svg" alt="SellShop" class="header-logo me-2">
+                SellShop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            Danh mục
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+                            <% if (typeof categories !=='undefined' && categories.length> 0) { %>
+                                <% categories.forEach(category=> { %>
+                                    <li><a class="dropdown-item" href="/products/category/<%= category.slug %>">
+                                            <%= category.name %>
+                                        </a></li>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <li><a class="dropdown-item" href="/products">Tất cả sản phẩm</a></li>
+                                            <% } %>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">Giới thiệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Liên hệ</a>
+                    </li>
+                </ul>
+
+                <form class="d-flex me-3" action="/products" method="GET">
+                    <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm..."
+                        aria-label="Search">
+                    <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
+                </form>
+
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <% if (typeof cartTotalItems !=='undefined' && cartTotalItems> 0) { %>
+                                <span class="badge rounded-pill bg-danger">
+                                    <%= cartTotalItems %>
+                                </span>
+                                <% } %>
+                        </a>
+                    </li>
+                    <% if (user) { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fas fa-user"></i>
+                                <%= user.name %>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="/users/profile">Hồ sơ</a></li>
+                                <li><a class="dropdown-item" href="/users/orders">Đơn hàng</a></li>
+                                <li><a class="dropdown-item" href="/users/wishlist">Yêu thích</a></li>
+                                <% if (user.role==='admin' ) { %>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="/admin">Quản trị</a></li>
+                                    <% } %>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item" href="/users/logout">Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users/login">Đăng nhập</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/users/register">Đăng ký</a>
+                            </li>
+                            <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,216 @@
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Chi tiết đơn hàng</h2>
+        <a href="/orders" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Quay lại đơn hàng
+        </a>
+    </div>
+
+    <% if (locals.successMessage) { %>
+        <div class="alert alert-success">
+            <%= successMessage %>
+        </div>
+        <% } %>
+
+            <% if (locals.errorMessage) { %>
+                <div class="alert alert-danger">
+                    <%= errorMessage %>
+                </div>
+                <% } %>
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <!-- Thông tin đơn hàng -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Thông tin đơn hàng #<%= order._id %>
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Ngày đặt hàng:</strong></p>
+                                            <p>
+                                                <%= new Date(order.createdAt).toLocaleDateString('vi-VN', {
+                                                    day: '2-digit' , month: '2-digit' , year: 'numeric' ,
+                                                    hour: '2-digit' , minute: '2-digit' }) %>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Trạng thái đơn hàng:</strong></p>
+                                            <p>
+                                                <% if (order.status==='pending' ) { %>
+                                                    <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                                    <% } else if (order.status==='processing' ) { %>
+                                                        <span class="badge bg-info">Đang xử lý</span>
+                                                        <% } else if (order.status==='shipped' ) { %>
+                                                            <span class="badge bg-primary">Đang giao</span>
+                                                            <% } else if (order.status==='delivered' ) { %>
+                                                                <span class="badge bg-success">Đã giao</span>
+                                                                <% } else if (order.status==='cancelled' ) { %>
+                                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                                    <% } %>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Phương thức thanh toán:</strong></p>
+                                            <p>
+                                                <%= order.paymentMethod==='cod' ? 'Thanh toán khi nhận hàng' : 'PayPal'
+                                                    %>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p class="mb-1"><strong>Trạng thái thanh toán:</strong></p>
+                                            <p>
+                                                <% if (order.paymentStatus==='paid' ) { %>
+                                                    <span class="badge bg-success">Đã thanh toán</span>
+                                                    <% } else { %>
+                                                        <span class="badge bg-warning text-dark">Chưa thanh toán</span>
+                                                        <% } %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sản phẩm đã đặt -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Sản phẩm đã đặt</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sản phẩm</th>
+                                                    <th class="text-center">Số lượng</th>
+                                                    <th class="text-end">Đơn giá</th>
+                                                    <th class="text-end">Thành tiền</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% order.items.forEach(item=> { %>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex align-items-center">
+                                                                <% if (item.image) { %>
+                                                                    <img src="<%= item.image %>" alt="<%= item.name %>"
+                                                                        class="img-thumbnail me-3"
+                                                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                                                    <% } %>
+                                                                        <div>
+                                                                            <h6 class="mb-0">
+                                                                                <%= item.name %>
+                                                                            </h6>
+                                                                            <small class="text-muted">Mã: <%=
+                                                                                    item.productId %></small>
+                                                                        </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <%= item.quantity %>
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <%= item.price.toLocaleString('vi-VN') %>đ
+                                                        </td>
+                                                        <td class="text-end">
+                                                            <%= (item.price * item.quantity).toLocaleString('vi-VN') %>đ
+                                                        </td>
+                                                    </tr>
+                                                    <% }); %>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="3" class="text-end"><strong>Tổng tiền hàng:</strong>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <%= order.subtotal.toLocaleString('vi-VN') %>đ
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3" class="text-end"><strong>Phí vận chuyển:</strong>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <%= order.shippingFee.toLocaleString('vi-VN') %>đ
+                                                    </td>
+                                                </tr>
+                                                <% if (order.discount> 0) { %>
+                                                    <tr>
+                                                        <td colspan="3" class="text-end"><strong>Giảm giá:</strong></td>
+                                                        <td class="text-end">-<%= order.discount.toLocaleString('vi-VN')
+                                                                %>đ</td>
+                                                    </tr>
+                                                    <% } %>
+                                                        <tr>
+                                                            <td colspan="3" class="text-end"><strong>Tổng thanh
+                                                                    toán:</strong></td>
+                                                            <td class="text-end fs-5 fw-bold">
+                                                                <%= order.totalAmount.toLocaleString('vi-VN') %>đ
+                                                            </td>
+                                                        </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <!-- Địa chỉ giao hàng -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Địa chỉ giao hàng</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-1"><strong>
+                                            <%= order.shippingAddress.fullName %>
+                                        </strong></p>
+                                    <p class="mb-1">
+                                        <%= order.shippingAddress.phone %>
+                                    </p>
+                                    <p class="mb-1">
+                                        <%= order.shippingAddress.address %>
+                                    </p>
+                                    <p class="mb-0">
+                                        <%= order.shippingAddress.ward %>,
+                                            <%= order.shippingAddress.district %>,
+                                                <%= order.shippingAddress.province %>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Thao tác đơn hàng -->
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Thao tác</h5>
+                                </div>
+                                <div class="card-body">
+                                    <% if (order.status==='pending' && order.paymentStatus !=='paid' ) { %>
+                                        <a href="/orders/payment/<%= order._id %>" class="btn btn-success w-100 mb-2">
+                                            <i class="fas fa-credit-card"></i> Thanh toán ngay
+                                        </a>
+
+                                        <form action="/orders/cancel/<%= order._id %>" method="POST">
+                                            <button type="submit" class="btn btn-danger w-100"
+                                                onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                                                <i class="fas fa-times"></i> Hủy đơn hàng
+                                            </button>
+                                        </form>
+                                        <% } else if (order.status==='delivered' ) { %>
+                                            <a href="/products/review/<%= order._id %>" class="btn btn-primary w-100">
+                                                <i class="fas fa-star"></i> Đánh giá sản phẩm
+                                            </a>
+                                            <% } else if (order.status==='cancelled' ) { %>
+                                                <p class="text-danger mb-0">Đơn hàng này đã bị hủy.</p>
+                                                <% } else { %>
+                                                    <p class="text-info mb-0">Đơn hàng của bạn đang được xử lý.</p>
+                                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+</div>

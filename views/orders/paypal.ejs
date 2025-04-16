@@ -1,0 +1,96 @@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Thanh toán qua PayPal</h4>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="/images/paypal-logo.png" alt="PayPal" style="max-width: 200px;">
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Bạn sẽ được chuyển đến trang thanh toán PayPal để hoàn tất
+                        giao dịch.
+                        Vui lòng không đóng trang này trong quá trình thanh toán.
+                    </div>
+
+                    <h5 class="mb-3">Thông tin đơn hàng:</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Mã đơn hàng:</th>
+                                <td>
+                                    <%= order._id %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Tổng tiền:</th>
+                                <td>
+                                    <%= order.totalAmount.toLocaleString('vi-VN') %>đ
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Tổng tiền (USD):</th>
+                                <td>$<%= (order.totalAmount / 23000).toFixed(2) %>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <div id="paypal-button-container"></div>
+                        <p class="text-muted small mt-3">Bạn sẽ được chuyển hướng đến PayPal để hoàn tất thanh toán của
+                            mình.
+                            Sau khi thanh toán thành công, bạn sẽ được chuyển trở lại trang web này.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="/orders" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại đơn hàng của tôi
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=test"></script>
+<script>
+    paypal.Buttons({
+        createOrder: function () {
+            return fetch('/orders/create-paypal-transaction', {
+                method: 'post',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderId: '<%= order._id %>'
+                })
+            }).then(function (res) {
+                return res.json();
+            }).then(function (data) {
+                return data.orderID;
+            });
+        },
+        onApprove: function (data) {
+            return fetch('/orders/capture-paypal-transaction', {
+                method: 'post',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                    orderId: '<%= order._id %>'
+                })
+            }).then(function (res) {
+                return res.json();
+            }).then(function (details) {
+                alert('Thanh toán thành công!');
+                window.location.href = '/orders/success?id=<%= order._id %>';
+            });
+        }
+    }).render('#paypal-button-container');
+</script>

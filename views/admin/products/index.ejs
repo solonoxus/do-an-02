@@ -1,0 +1,203 @@
+<!-- Thanh công cụ -->
+<div class="mb-4 d-flex justify-content-between">
+    <div>
+        <a href="/admin/products/add" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm sản phẩm mới
+        </a>
+    </div>
+    <div>
+        <form class="d-flex" action="/admin/products" method="GET">
+            <input class="form-control me-2" type="search" name="search" placeholder="Tìm kiếm sản phẩm..."
+                value="<%= query.search ? query.search : '' %>">
+            <select class="form-select me-2" name="category">
+                <option value="">-- Tất cả danh mục --</option>
+                <% if(typeof categories !=='undefined' && categories.length> 0) { %>
+                    <% categories.forEach(category=> { %>
+                        <option value="<%= category._id %>" <%=query.category===category._id.toString() ? 'selected'
+                            : '' %>>
+                            <%= category.name %>
+                        </option>
+                        <% }) %>
+                            <% } %>
+            </select>
+            <button class="btn btn-outline-primary" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Danh sách sản phẩm -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-table me-1"></i>
+        Danh sách sản phẩm
+        <span class="badge bg-primary">
+            <%= totalProducts %>
+        </span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered datatable">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Ảnh</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá</th>
+                        <th>Giá KM</th>
+                        <th>Kho</th>
+                        <th>Nổi bật</th>
+                        <th style="width: 140px;">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if(typeof products !=='undefined' && products.length> 0) { %>
+                        <% products.forEach(product=> { %>
+                            <tr>
+                                <td>
+                                    <img src="<%= product.mainImage %>" alt="<%= product.name %>" class="table-img">
+                                </td>
+                                <td>
+                                    <strong>
+                                        <%= product.name %>
+                                    </strong>
+                                    <small class="d-block text-muted">Slug: <%= product.slug %></small>
+                                </td>
+                                <td>
+                                    <%= product.category ? product.category.name : 'N/A' %>
+                                </td>
+                                <td>
+                                    <%= product.price.toLocaleString('vi-VN') %>đ
+                                </td>
+                                <td>
+                                    <% if(product.salePrice) { %>
+                                        <span class="text-danger">
+                                            <%= product.salePrice.toLocaleString('vi-VN') %>đ
+                                        </span>
+                                        <% } else { %>
+                                            <span class="text-muted">--</span>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <% if(product.stock> 10) { %>
+                                        <span class="badge bg-success">
+                                            <%= product.stock %>
+                                        </span>
+                                        <% } else if(product.stock> 0) { %>
+                                            <span class="badge bg-warning">
+                                                <%= product.stock %>
+                                            </span>
+                                            <% } else { %>
+                                                <span class="badge bg-danger">Hết hàng</span>
+                                                <% } %>
+                                </td>
+                                <td class="text-center">
+                                    <% if(product.featured) { %>
+                                        <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary"><i class="fas fa-times"></i></span>
+                                            <% } %>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/products/<%= product.slug %>" target="_blank"
+                                            class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="/admin/products/edit/<%= product._id %>"
+                                            class="btn btn-sm btn-outline-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal<%= product._id %>">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Modal Xóa -->
+                                    <div class="modal fade" id="deleteModal<%= product._id %>" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Xác nhận xóa sản phẩm</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Bạn có chắc chắn muốn xóa sản phẩm "<%= product.name %>"?</p>
+                                                    <p class="text-danger"><strong>Lưu ý:</strong> Hành động này không
+                                                        thể hoàn tác.</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Hủy</button>
+                                                    <form
+                                                        action="/admin/products/delete/<%= product._id %>?_method=DELETE"
+                                                        method="POST">
+                                                        <button type="submit" class="btn btn-danger">Xóa sản
+                                                            phẩm</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="8" class="text-center">Không có sản phẩm nào.</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        <% if (totalPages> 1) { %>
+            <nav aria-label="Phân trang">
+                <ul class="pagination justify-content-center">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="/admin/products?page=<%= currentPage - 1 %><%= query.search ? '&search=' + query.search : '' %><%= query.category ? '&category=' + query.category : '' %>">Trước</a>
+                        </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Trước</a>
+                            </li>
+                            <% } %>
+
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <% if (i===currentPage) { %>
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } else { %>
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="/admin/products?page=<%= i %><%= query.search ? '&search=' + query.search : '' %><%= query.category ? '&category=' + query.category : '' %>">
+                                                    <%= i %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                                <% } %>
+
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link"
+                                                                href="/admin/products?page=<%= currentPage + 1 %><%= query.search ? '&search=' + query.search : '' %><%= query.category ? '&category=' + query.category : '' %>">Tiếp</a>
+                                                        </li>
+                                                        <% } else { %>
+                                                            <li class="page-item disabled">
+                                                                <a class="page-link" href="#" tabindex="-1">Tiếp</a>
+                                                            </li>
+                                                            <% } %>
+                </ul>
+            </nav>
+            <% } %>
+    </div>
+</div>

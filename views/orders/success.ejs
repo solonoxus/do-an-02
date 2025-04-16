@@ -1,0 +1,48 @@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <div class="card shadow-sm">
+                <div class="card-body py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success fa-5x"></i>
+                    </div>
+                    <h2 class="mb-3">Đặt hàng thành công!</h2>
+                    <p class="lead mb-4">Cảm ơn bạn đã mua hàng tại SellShop.</p>
+
+                    <% if (locals.order) { %>
+                        <div class="alert alert-light text-start mb-4">
+                            <p class="mb-1"><strong>Mã đơn hàng:</strong>
+                                <%= order._id %>
+                            </p>
+                            <p class="mb-1"><strong>Tổng tiền:</strong>
+                                <%= order.totalAmount.toLocaleString('vi-VN') %>đ
+                            </p>
+                            <p class="mb-0"><strong>Ngày đặt hàng:</strong>
+                                <%= new Date(order.createdAt).toLocaleDateString('vi-VN') %>
+                            </p>
+                        </div>
+
+                        <p>Chúng tôi đã gửi xác nhận đơn hàng đến email của bạn. Bạn có thể theo dõi trạng thái đơn hàng
+                            trong trang "Đơn hàng của tôi".</p>
+                        <% } %>
+
+                            <div class="d-flex justify-content-center mt-4">
+                                <% if (locals.order) { %>
+                                    <a href="/orders/<%= order._id %>" class="btn btn-primary me-2">
+                                        <i class="fas fa-eye"></i> Xem chi tiết đơn hàng
+                                    </a>
+                                    <% } %>
+
+                                        <a href="/orders" class="btn btn-outline-secondary me-2">
+                                            <i class="fas fa-list"></i> Đơn hàng của tôi
+                                        </a>
+
+                                        <a href="/products" class="btn btn-success">
+                                            <i class="fas fa-shopping-bag"></i> Tiếp tục mua sắm
+                                        </a>
+                            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

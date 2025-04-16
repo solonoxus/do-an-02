@@ -1,0 +1,218 @@
+<div class="row">
+    <!-- Sidebar - Bộ lọc -->
+    <div class="col-lg-3 mb-4">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Bộ lọc</h5>
+            </div>
+            <div class="card-body">
+                <form action="/products" method="GET">
+                    <!-- Nếu đang tìm kiếm, giữ lại giá trị search -->
+                    <% if(typeof query !=='undefined' && query.search) { %>
+                        <input type="hidden" name="search" value="<%= query.search %>">
+                        <% } %>
+
+                            <!-- Lọc theo danh mục -->
+                            <div class="mb-4">
+                                <h6>Danh mục</h6>
+                                <div class="list-group">
+                                    <a href="/products"
+                                        class="list-group-item list-group-item-action <%= typeof query === 'undefined' || !query.category ? 'active' : '' %>">
+                                        Tất cả
+                                    </a>
+                                    <% if(typeof categories !=='undefined' && categories.length> 0) { %>
+                                        <% categories.forEach(category=> { %>
+                                            <a href="/products?category=<%= category._id %>"
+                                                class="list-group-item list-group-item-action <%= typeof query !== 'undefined' && query.category === category._id.toString() ? 'active' : '' %>">
+                                                <%= category.name %>
+                                            </a>
+                                            <% }); %>
+                                                <% } %>
+                                </div>
+                            </div>
+
+                            <!-- Lọc theo giá -->
+                            <div class="mb-4">
+                                <h6>Giá</h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <input type="number" name="minPrice" class="form-control form-control-sm"
+                                            placeholder="Từ"
+                                            value="<%= typeof query !== 'undefined' && query.minPrice ? query.minPrice : '' %>">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="number" name="maxPrice" class="form-control form-control-sm"
+                                            placeholder="Đến"
+                                            value="<%= typeof query !== 'undefined' && query.maxPrice ? query.maxPrice : '' %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Nút áp dụng bộ lọc -->
+                            <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="col-lg-9">
+        <!-- Thanh tiêu đề và sắp xếp -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Sản phẩm</h2>
+            <div class="d-flex align-items-center">
+                <label for="sort" class="me-2">Sắp xếp:</label>
+                <select id="sort" class="form-select form-select-sm" style="width: auto;">
+                    <option
+                        value="/products<%= typeof query !== 'undefined' ? '?' + new URLSearchParams({...query, sort: 'newest'}).toString() : '?sort=newest' %>"
+                        <%=typeof query !=='undefined' && query.sort==='newest' ? 'selected' : '' %>>
+                        Mới nhất
+                    </option>
+                    <option
+                        value="/products<%= typeof query !== 'undefined' ? '?' + new URLSearchParams({...query, sort: 'price_asc'}).toString() : '?sort=price_asc' %>"
+                        <%=typeof query !=='undefined' && query.sort==='price_asc' ? 'selected' : '' %>>
+                        Giá tăng dần
+                    </option>
+                    <option
+                        value="/products<%= typeof query !== 'undefined' ? '?' + new URLSearchParams({...query, sort: 'price_desc'}).toString() : '?sort=price_desc' %>"
+                        <%=typeof query !=='undefined' && query.sort==='price_desc' ? 'selected' : '' %>>
+                        Giá giảm dần
+                    </option>
+                    <option
+                        value="/products<%= typeof query !== 'undefined' ? '?' + new URLSearchParams({...query, sort: 'rating'}).toString() : '?sort=rating' %>"
+                        <%=typeof query !=='undefined' && query.sort==='rating' ? 'selected' : '' %>>
+                        Đánh giá cao
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Hiển thị thông tin tìm kiếm nếu có -->
+        <% if(typeof query !=='undefined' && query.search) { %>
+            <div class="alert alert-info">
+                Kết quả tìm kiếm cho: "<%= query.search %>"
+                    <a href="/products" class="float-end">Xóa bộ lọc</a>
+            </div>
+            <% } %>
+
+                <!-- Danh sách sản phẩm -->
+                <div class="row">
+                    <% if(typeof products !=='undefined' && products.length> 0) { %>
+                        <% products.forEach(product=> { %>
+                            <div class="col-md-4 col-sm-6 mb-4">
+                                <div class="card product-card h-100">
+                                    <div class="product-img-container">
+                                        <img src="<%= product.mainImage %>" class="card-img-top"
+                                            alt="<%= product.name %>">
+                                        <% if(product.salePrice && product.salePrice < product.price) { %>
+                                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">Giảm
+                                                giá</span>
+                                            <% } %>
+                                    </div>
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title product-title">
+                                            <%= product.name %>
+                                        </h5>
+                                        <p class="card-text text-muted small mb-2">
+                                            <%= product.category.name %>
+                                        </p>
+                                        <div class="mb-2">
+                                            <% if(product.salePrice && product.salePrice < product.price) { %>
+                                                <span class="text-danger fw-bold">
+                                                    <%= product.salePrice.toLocaleString('vi-VN') %>đ
+                                                </span>
+                                                <span class="text-muted text-decoration-line-through ms-2">
+                                                    <%= product.price.toLocaleString('vi-VN') %>đ
+                                                </span>
+                                                <% } else { %>
+                                                    <span class="fw-bold">
+                                                        <%= product.price.toLocaleString('vi-VN') %>đ
+                                                    </span>
+                                                    <% } %>
+                                        </div>
+                                        <% if(product.averageRating> 0) { %>
+                                            <div class="mb-2">
+                                                <% for(let i=1; i <=5; i++) { %>
+                                                    <i
+                                                        class="<%= i <= Math.round(product.averageRating) ? 'fas' : 'far' %> fa-star text-warning"></i>
+                                                    <% } %>
+                                                        <span class="text-muted ms-1">(<%= product.ratings.length %>
+                                                                )</span>
+                                            </div>
+                                            <% } %>
+                                                <div class="d-flex justify-content-between mt-auto">
+                                                    <a href="/products/<%= product.slug %>"
+                                                        class="btn btn-sm btn-outline-primary">Chi tiết</a>
+                                                    <form action="/cart/add" method="POST">
+                                                        <input type="hidden" name="productId"
+                                                            value="<%= product._id %>">
+                                                        <input type="hidden" name="redirect"
+                                                            value="/products<%= typeof query !== 'undefined' ? '?' + new URLSearchParams(query).toString() : '' %>">
+                                                        <button type="submit" class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-cart-plus"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="col-12">
+                                        <div class="alert alert-warning text-center">
+                                            Không tìm thấy sản phẩm nào.
+                                        </div>
+                                    </div>
+                                    <% } %>
+                </div>
+
+                <!-- Phân trang -->
+                <% if(typeof totalPages !=='undefined' && totalPages> 1) { %>
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <% if(currentPage> 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="/products?<%= typeof query !== 'undefined' ? new URLSearchParams({...query, page: currentPage - 1}).toString() : 'page=' + (currentPage - 1) %>">
+                                        Trước
+                                    </a>
+                                </li>
+                                <% } else { %>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">Trước</span>
+                                    </li>
+                                    <% } %>
+
+                                        <% for(let i=1; i <=totalPages; i++) { %>
+                                            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                <a class="page-link"
+                                                    href="/products?<%= typeof query !== 'undefined' ? new URLSearchParams({...query, page: i}).toString() : 'page=' + i %>">
+                                                    <%= i %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+
+                                                <% if(currentPage < totalPages) { %>
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                            href="/products?<%= typeof query !== 'undefined' ? new URLSearchParams({...query, page: currentPage + 1}).toString() : 'page=' + (currentPage + 1) %>">
+                                                            Tiếp
+                                                        </a>
+                                                    </li>
+                                                    <% } else { %>
+                                                        <li class="page-item disabled">
+                                                            <span class="page-link">Tiếp</span>
+                                                        </li>
+                                                        <% } %>
+                        </ul>
+                    </nav>
+                    <% } %>
+    </div>
+</div>
+
+<!-- JavaScript để xử lý dropdown sắp xếp -->
+<script>
+    document.getElementById('sort').addEventListener('change', function () {
+        window.location.href = this.value;
+    });
+</script>

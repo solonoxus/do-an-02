@@ -1,0 +1,316 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Chỉnh sửa sản phẩm</h4>
+                    <a href="/admin/products" class="btn btn-outline-secondary float-end">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/products/edit/<%= product._id %>" method="POST" enctype="multipart/form-data">
+                        <!-- Thông tin cơ bản -->
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Thông tin cơ bản</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Tên sản phẩm <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                value="<%= product.name %>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="slug" class="form-label">Slug <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="slug" name="slug"
+                                                value="<%= product.slug %>" required>
+                                            <div class="form-text">URL thân thiện, sử dụng dấu gạch ngang, không dấu và
+                                                không khoảng trắng.</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="description" class="form-label">Mô tả</label>
+                                            <textarea class="form-control" id="description" name="description"
+                                                rows="4"><%= product.description %></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="category" class="form-label">Danh mục <span
+                                                            class="text-danger">*</span></label>
+                                                    <select class="form-select" id="category" name="category" required>
+                                                        <option value="">-- Chọn danh mục --</option>
+                                                        <% categories.forEach(category=> { %>
+                                                            <option value="<%= category._id %>"
+                                                                <%=product.category.toString()===category._id.toString()
+                                                                ? 'selected' : '' %>>
+                                                                <%= category.name %>
+                                                            </option>
+                                                            <% }); %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="brand" class="form-label">Thương hiệu</label>
+                                                    <input type="text" class="form-control" id="brand" name="brand"
+                                                        value="<%= product.brand %>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Giá & Kho hàng</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="price" class="form-label">Giá bán <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="price" name="price"
+                                                    value="<%= product.price %>" required>
+                                                <span class="input-group-text">VNĐ</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="salePrice" class="form-label">Giá khuyến mãi</label>
+                                            <div class="input-group">
+                                                <input type="number" class="form-control" id="salePrice"
+                                                    name="salePrice" value="<%= product.salePrice || '' %>">
+                                                <span class="input-group-text">VNĐ</span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="stock" class="form-label">Số lượng trong kho <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="number" class="form-control" id="stock" name="stock"
+                                                value="<%= product.stock %>" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="featured"
+                                                    name="featured" <%=product.featured ? 'checked' : '' %>>
+                                                <label class="form-check-label" for="featured">
+                                                    Sản phẩm nổi bật
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hình ảnh sản phẩm -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Hình ảnh sản phẩm</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="mainImage" class="form-label">Ảnh chính</label>
+                                            <input type="file" class="form-control" id="mainImage" name="mainImage"
+                                                accept="image/*">
+                                            <div class="form-text">Để trống nếu không muốn thay đổi ảnh chính.</div>
+                                        </div>
+
+                                        <% if (product.mainImage) { %>
+                                            <div class="mb-3">
+                                                <label class="form-label">Ảnh chính hiện tại</label>
+                                                <div class="border p-2">
+                                                    <img src="<%= product.mainImage %>" alt="Ảnh chính"
+                                                        class="img-thumbnail" style="max-height: 150px;">
+                                                </div>
+                                                <div class="form-check mt-2">
+                                                    <input class="form-check-input" type="checkbox" id="removeMainImage"
+                                                        name="removeMainImage">
+                                                    <label class="form-check-label" for="removeMainImage">
+                                                        Xóa ảnh chính
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="images" class="form-label">Ảnh bổ sung</label>
+                                            <input type="file" class="form-control" id="images" name="images"
+                                                accept="image/*" multiple>
+                                            <div class="form-text">Có thể chọn nhiều ảnh. Ảnh mới sẽ được thêm vào danh
+                                                sách ảnh hiện có.</div>
+                                        </div>
+
+                                        <% if (product.images && product.images.length> 0) { %>
+                                            <div class="mb-3">
+                                                <label class="form-label">Ảnh bổ sung hiện tại</label>
+                                                <div class="row border p-2">
+                                                    <% product.images.forEach((image, index)=> { %>
+                                                        <div class="col-4 mb-2">
+                                                            <div class="position-relative">
+                                                                <img src="<%= image %>" alt="Ảnh bổ sung"
+                                                                    class="img-thumbnail"
+                                                                    style="height: 80px; object-fit: cover;">
+                                                                <div class="form-check mt-1">
+                                                                    <input class="form-check-input" type="checkbox"
+                                                                        id="removeImage<%= index %>" name="removeImages"
+                                                                        value="<%= index %>">
+                                                                    <label class="form-check-label"
+                                                                        for="removeImage<%= index %>">
+                                                                        Xóa
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% }); %>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thông số kỹ thuật -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Thông số kỹ thuật</h5>
+                                <button type="button" class="btn btn-sm btn-primary" id="addSpecBtn">
+                                    <i class="fas fa-plus"></i> Thêm thông số
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="specificationsContainer">
+                                    <% if (product.specifications && Object.keys(product.specifications).length> 0) { %>
+                                        <% Object.entries(product.specifications).forEach(([key, value], index)=> { %>
+                                            <div class="row mb-3 spec-row">
+                                                <div class="col-md-5">
+                                                    <input type="text" class="form-control" name="specKeys[]"
+                                                        placeholder="Tên thông số" value="<%= key %>">
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <input type="text" class="form-control" name="specValues[]"
+                                                        placeholder="Giá trị" value="<%= value %>">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="button" class="btn btn-danger btn-sm remove-spec">
+                                                        <i class="fas fa-times"></i> Xóa
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p class="text-muted">Chưa có thông số kỹ thuật nào. Nhấn "Thêm
+                                                        thông số" để thêm mới.</p>
+                                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Slug generator
+        const nameInput = document.getElementById('name');
+        const slugInput = document.getElementById('slug');
+
+        nameInput.addEventListener('input', function () {
+            if (!slugInput.value || slugInput.dataset.autoGenerated === 'true') {
+                slugInput.value = generateSlug(nameInput.value);
+                slugInput.dataset.autoGenerated = 'true';
+            }
+        });
+
+        slugInput.addEventListener('input', function () {
+            slugInput.dataset.autoGenerated = 'false';
+        });
+
+        function generateSlug(text) {
+            return text
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[đĐ]/g, 'd')
+                .replace(/[^a-z0-9\s]/g, '')
+                .replace(/\s+/g, '-');
+        }
+
+        // Add specification
+        document.getElementById('addSpecBtn').addEventListener('click', function () {
+            const container = document.getElementById('specificationsContainer');
+
+            // Xóa thông báo "Chưa có thông số" nếu có
+            const emptyMessage = container.querySelector('p.text-muted');
+            if (emptyMessage) {
+                container.removeChild(emptyMessage);
+            }
+
+            const row = document.createElement('div');
+            row.className = 'row mb-3 spec-row';
+            row.innerHTML = `
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="specKeys[]" placeholder="Tên thông số">
+                </div>
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="specValues[]" placeholder="Giá trị">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger btn-sm remove-spec">
+                        <i class="fas fa-times"></i> Xóa
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(row);
+
+            // Bind remove event
+            row.querySelector('.remove-spec').addEventListener('click', function () {
+                container.removeChild(row);
+
+                // Nếu không còn thông số nào, hiển thị lại thông báo
+                if (container.querySelectorAll('.spec-row').length === 0) {
+                    const message = document.createElement('p');
+                    message.className = 'text-muted';
+                    message.textContent = 'Chưa có thông số kỹ thuật nào. Nhấn "Thêm thông số" để thêm mới.';
+                    container.appendChild(message);
+                }
+            });
+        });
+
+        // Initial bind for existing remove buttons
+        document.querySelectorAll('.remove-spec').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const row = button.closest('.spec-row');
+                const container = document.getElementById('specificationsContainer');
+                container.removeChild(row);
+
+                // Nếu không còn thông số nào, hiển thị lại thông báo
+                if (container.querySelectorAll('.spec-row').length === 0) {
+                    const message = document.createElement('p');
+                    message.className = 'text-muted';
+                    message.textContent = 'Chưa có thông số kỹ thuật nào. Nhấn "Thêm thông số" để thêm mới.';
+                    container.appendChild(message);
+                }
+            });
+        });
+    });
+</script>

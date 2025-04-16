@@ -1,0 +1,161 @@
+<%- contentFor('body') %>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-3">
+                <%- include('../partials/user-sidebar') %>
+            </div>
+            <div class="col-md-9">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Chi tiết đơn hàng #<%= order._id.toString().substring(0, 8) %>
+                        </h5>
+                        <span class="ms-auto">
+                            <% if(order.status==='pending' ) { %>
+                                <span class="badge bg-warning">Chờ xác nhận</span>
+                                <% } else if(order.status==='processing' ) { %>
+                                    <span class="badge bg-info">Đang xử lý</span>
+                                    <% } else if(order.status==='shipped' ) { %>
+                                        <span class="badge bg-primary">Đang giao hàng</span>
+                                        <% } else if(order.status==='delivered' ) { %>
+                                            <span class="badge bg-success">Đã giao hàng</span>
+                                            <% } else if(order.status==='cancelled' ) { %>
+                                                <span class="badge bg-danger">Đã hủy</span>
+                                                <% } %>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Thông tin đơn hàng</h6>
+                                <p><strong>Mã đơn hàng:</strong>
+                                    <%= order._id %>
+                                </p>
+                                <p><strong>Ngày đặt:</strong>
+                                    <%= new Date(order.createdAt).toLocaleString('vi-VN') %>
+                                </p>
+                                <p><strong>Phương thức thanh toán:</strong>
+                                    <% if(order.paymentMethod==='cod' ) { %>
+                                        Thanh toán khi nhận hàng
+                                        <% } else if(order.paymentMethod==='credit_card' ) { %>
+                                            Thẻ tín dụng
+                                            <% } else if(order.paymentMethod==='paypal' ) { %>
+                                                PayPal
+                                                <% } else { %>
+                                                    <%= order.paymentMethod %>
+                                                        <% } %>
+                                </p>
+                                <p><strong>Tình trạng thanh toán:</strong>
+                                    <% if(order.paymentStatus==='pending' ) { %>
+                                        <span class="badge bg-warning">Chưa thanh toán</span>
+                                        <% } else if(order.paymentStatus==='completed' ) { %>
+                                            <span class="badge bg-success">Đã thanh toán</span>
+                                            <% } else if(order.paymentStatus==='failed' ) { %>
+                                                <span class="badge bg-danger">Thanh toán thất bại</span>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary">
+                                                        <%= order.paymentStatus %>
+                                                    </span>
+                                                    <% } %>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Thông tin giao hàng</h6>
+                                <p><strong>Người nhận:</strong>
+                                    <%= order.shippingAddress.name %>
+                                </p>
+                                <p><strong>Số điện thoại:</strong>
+                                    <%= order.shippingAddress.phone %>
+                                </p>
+                                <p><strong>Địa chỉ:</strong>
+                                    <%= order.shippingAddress.street %>, <%= order.shippingAddress.city %>, <%=
+                                                order.shippingAddress.state %>, <%= order.shippingAddress.country %>
+                                </p>
+                                <p><strong>Mã bưu điện:</strong>
+                                    <%= order.shippingAddress.zipCode %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <h6 class="text-muted">Sản phẩm</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th class="text-end">Giá</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-end">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% order.products.forEach(item=> { %>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <% if(item.product && item.product.mainImage) { %>
+                                                        <img src="<%= item.product.mainImage %>" alt="<%= item.name %>"
+                                                            class="img-thumbnail me-2" style="max-width: 50px;">
+                                                        <% } %>
+                                                            <div>
+                                                                <h6 class="mb-0">
+                                                                    <%= item.name %>
+                                                                </h6>
+                                                                <% if(item.product) { %>
+                                                                    <a href="/products/<%= item.product.slug %>"
+                                                                        class="small text-muted">Xem sản phẩm</a>
+                                                                    <% } %>
+                                                            </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <%= item.price.toLocaleString('vi-VN') %>₫
+                                            </td>
+                                            <td class="text-center">
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td class="text-end">
+                                                <%= (item.price * item.quantity).toLocaleString('vi-VN') %>₫
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Tổng tiền:</strong></td>
+                                        <td class="text-end"><strong>
+                                                <%= order.totalAmount.toLocaleString('vi-VN') %>₫
+                                            </strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <% if(order.notes) { %>
+                            <div class="mt-4">
+                                <h6 class="text-muted">Ghi chú đơn hàng</h6>
+                                <div class="p-3 bg-light rounded">
+                                    <%= order.notes %>
+                                </div>
+                            </div>
+                            <% } %>
+
+                                <div class="mt-4 d-flex justify-content-between">
+                                    <a href="/users/orders" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left"></i> Quay lại danh sách
+                                    </a>
+
+                                    <% if(order.status==='pending' || order.status==='processing' ) { %>
+                                        <form action="/orders/<%= order._id %>/cancel" method="POST" class="d-inline"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="fas fa-times"></i> Hủy đơn hàng
+                                            </button>
+                                        </form>
+                                        <% } %>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

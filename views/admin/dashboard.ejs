@@ -1,0 +1,275 @@
+<!-- Thẻ Overview -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-4">
+        <div class="card bg-primary text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase">Tổng đơn hàng</h6>
+                        <h2 class="mb-0">
+                            <%= ordersCount %>
+                        </h2>
+                    </div>
+                    <i class="fas fa-shopping-cart fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a href="/admin/orders" class="text-white">Xem chi tiết</a>
+                <i class="fas fa-arrow-right text-white"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase">Tổng doanh thu</h6>
+                        <h2 class="mb-0">
+                            <%= totalRevenue ? totalRevenue.toLocaleString('vi-VN') : 0 %>đ
+                        </h2>
+                    </div>
+                    <i class="fas fa-money-bill-wave fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a href="/admin/orders" class="text-white">Xem chi tiết</a>
+                <i class="fas fa-arrow-right text-white"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase">Sản phẩm</h6>
+                        <h2 class="mb-0">
+                            <%= productsCount %>
+                        </h2>
+                    </div>
+                    <i class="fas fa-box fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a href="/admin/products" class="text-white">Xem chi tiết</a>
+                <i class="fas fa-arrow-right text-white"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card bg-danger text-white h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="text-uppercase">Người dùng</h6>
+                        <h2 class="mb-0">
+                            <%= usersCount %>
+                        </h2>
+                    </div>
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+            </div>
+            <div class="card-footer d-flex align-items-center justify-content-between">
+                <a href="/admin/users" class="text-white">Xem chi tiết</a>
+                <i class="fas fa-arrow-right text-white"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Đơn hàng gần đây -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Đơn hàng gần đây
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered datatable">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(typeof latestOrders !=='undefined' && latestOrders.length> 0) { %>
+                                <% latestOrders.forEach(order=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= order._id.toString().substring(0, 8).toUpperCase() %>
+                                        </td>
+                                        <td>
+                                            <%= order.user ? order.user.name : 'Khách vãng lai' %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(order.createdAt).toLocaleDateString('vi-VN') %>
+                                        </td>
+                                        <td>
+                                            <%= order.totalAmount.toLocaleString('vi-VN') %>đ
+                                        </td>
+                                        <td>
+                                            <% if(order.status==='pending' ) { %>
+                                                <span class="badge bg-warning">Chờ xử lý</span>
+                                                <% } else if(order.status==='processing' ) { %>
+                                                    <span class="badge bg-info">Đang xử lý</span>
+                                                    <% } else if(order.status==='shipped' ) { %>
+                                                        <span class="badge bg-primary">Đang giao hàng</span>
+                                                        <% } else if(order.status==='delivered' ) { %>
+                                                            <span class="badge bg-success">Đã giao hàng</span>
+                                                            <% } else if(order.status==='cancelled' ) { %>
+                                                                <span class="badge bg-danger">Đã hủy</span>
+                                                                <% } %>
+                                        </td>
+                                        <td>
+                                            <a href="/admin/orders/<%= order._id %>" class="btn btn-sm btn-info">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6" class="text-center">Không có đơn hàng nào gần đây.</td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doanh thu Card -->
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Tổng doanh thu</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <%= totalRevenue.toLocaleString('vi-VN') %>₫
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doanh thu tháng Card -->
+<div class="col-xl-3 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Doanh thu tháng này</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                        <%= totalMonthlyRevenue.toLocaleString('vi-VN') %>₫
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Biểu đồ doanh thu -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Tổng quan doanh thu</h6>
+                <a href="/admin/revenue" class="btn btn-sm btn-primary">
+                    <i class="fas fa-chart-line mr-1"></i> Xem báo cáo chi tiết
+                </a>
+            </div>
+            <div class="card-body text-center">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="p-3">
+                            <h5>Tổng doanh thu</h5>
+                            <h2 class="text-success">
+                                <%= totalRevenue.toLocaleString('vi-VN') %>₫
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3">
+                            <h5>Doanh thu tháng này</h5>
+                            <h2 class="text-primary">
+                                <%= totalMonthlyRevenue.toLocaleString('vi-VN') %>₫
+                            </h2>
+                            <small class="text-muted">
+                                <%= new Date().toLocaleString('vi-VN', {month: 'long' , year: 'numeric' }) %>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a href="/admin/revenue" class="btn btn-outline-primary">
+                        <i class="fas fa-chart-bar mr-1"></i> Xem thống kê theo tháng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đơn hàng theo trạng thái -->
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Đơn hàng theo trạng thái</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2 d-flex justify-content-between">
+                    <span>Chờ xác nhận:</span>
+                    <span class="badge bg-warning">
+                        <%= statusCounts.pending || 0 %>
+                    </span>
+                </div>
+                <div class="mb-2 d-flex justify-content-between">
+                    <span>Đang xử lý:</span>
+                    <span class="badge bg-info">
+                        <%= statusCounts.processing || 0 %>
+                    </span>
+                </div>
+                <div class="mb-2 d-flex justify-content-between">
+                    <span>Đang giao hàng:</span>
+                    <span class="badge bg-primary">
+                        <%= statusCounts.shipped || 0 %>
+                    </span>
+                </div>
+                <div class="mb-2 d-flex justify-content-between">
+                    <span>Đã giao hàng:</span>
+                    <span class="badge bg-success">
+                        <%= statusCounts.delivered || 0 %>
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Đã hủy:</span>
+                    <span class="badge bg-danger">
+                        <%= statusCounts.cancelled || 0 %>
+                    </span>
+                </div>
+                <div class="mt-3">
+                    <a href="/admin/orders" class="btn btn-outline-secondary btn-sm">Xem tất cả đơn hàng</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

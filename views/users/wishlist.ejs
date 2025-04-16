@@ -1,0 +1,88 @@
+<%- contentFor('body') %>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-3">
+                <%- include('../partials/user-sidebar') %>
+            </div>
+            <div class="col-md-9">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Sản phẩm yêu thích</h5>
+                    </div>
+                    <div class="card-body">
+                        <% if(wishlist && wishlist.length> 0) { %>
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                                <% wishlist.forEach(product=> { %>
+                                    <div class="col">
+                                        <div class="card h-100 product-card">
+                                            <% if(product.mainImage) { %>
+                                                <img src="<%= product.mainImage %>" class="card-img-top"
+                                                    alt="<%= product.name %>">
+                                                <% } else { %>
+                                                    <div class="no-image text-center p-4 bg-light">
+                                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                                    </div>
+                                                    <% } %>
+                                                        <div class="card-body">
+                                                            <h5 class="card-title product-title">
+                                                                <a href="/products/<%= product.slug %>"
+                                                                    class="text-decoration-none text-dark">
+                                                                    <%= product.name %>
+                                                                </a>
+                                                            </h5>
+                                                            <p class="card-text text-muted small">
+                                                                <%= product.category ? product.category.name
+                                                                    : 'Không phân loại' %>
+                                                            </p>
+                                                            <div class="product-price mb-2">
+                                                                <% if(product.salePrice && product.salePrice <
+                                                                    product.price) { %>
+                                                                    <span class="text-danger fw-bold">
+                                                                        <%= product.salePrice.toLocaleString('vi-VN') %>
+                                                                            ₫
+                                                                    </span>
+                                                                    <small
+                                                                        class="text-muted text-decoration-line-through">
+                                                                        <%= product.price.toLocaleString('vi-VN') %>₫
+                                                                    </small>
+                                                                    <% } else { %>
+                                                                        <span class="fw-bold">
+                                                                            <%= product.price.toLocaleString('vi-VN') %>
+                                                                                ₫
+                                                                        </span>
+                                                                        <% } %>
+                                                            </div>
+                                                            <div class="d-grid gap-2">
+                                                                <a href="/products/<%= product.slug %>"
+                                                                    class="btn btn-sm btn-outline-primary">
+                                                                    <i class="fas fa-eye"></i> Xem chi tiết
+                                                                </a>
+                                                                <form action="/users/wishlist/remove/<%= product._id %>"
+                                                                    method="POST" class="d-inline">
+                                                                    <button type="submit"
+                                                                        class="btn btn-sm btn-outline-danger w-100">
+                                                                        <i class="fas fa-heart-broken"></i> Xóa khỏi yêu
+                                                                        thích
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                            </div>
+                            <% } else { %>
+                                <div class="text-center py-5">
+                                    <div class="mb-4">
+                                        <i class="far fa-heart fa-5x text-muted"></i>
+                                    </div>
+                                    <h5 class="text-muted mb-3">Bạn chưa có sản phẩm yêu thích nào</h5>
+                                    <a href="/products" class="btn btn-primary">Khám phá sản phẩm ngay</a>
+                                </div>
+                                <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

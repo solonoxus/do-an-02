@@ -1,0 +1,112 @@
+<div class="container-fluid">
+    <h1 class="h3 mb-2 text-gray-800">Quản lý danh mục</h1>
+
+    <% if (locals.successMessage) { %>
+        <div class="alert alert-success">
+            <%= successMessage %>
+        </div>
+        <% } %>
+
+            <% if (locals.errorMessage) { %>
+                <div class="alert alert-danger">
+                    <%= errorMessage %>
+                </div>
+                <% } %>
+
+                    <!-- Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Danh sách danh mục</h6>
+                            <a href="/admin/categories/create" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Thêm danh mục mới
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">ID</th>
+                                            <th width="30%">Tên danh mục</th>
+                                            <th width="40%">Mô tả</th>
+                                            <th width="10%">Trạng thái</th>
+                                            <th width="15%">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (categories && categories.length> 0) { %>
+                                            <% categories.forEach((category, index)=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= index + 1 %>
+                                                    </td>
+                                                    <td>
+                                                        <%= category.name %>
+                                                    </td>
+                                                    <td>
+                                                        <%= category.description || 'Không có mô tả' %>
+                                                    </td>
+                                                    <td>
+                                                        <% if(category.active) { %>
+                                                            <span class="badge badge-success">Hoạt động</span>
+                                                            <% } else { %>
+                                                                <span class="badge badge-danger">Không hoạt động</span>
+                                                                <% } %>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/admin/categories/edit/<%= category._id %>"
+                                                            class="btn btn-info btn-sm mb-1">
+                                                            <i class="fas fa-edit"></i> Sửa
+                                                        </a>
+                                                        <form
+                                                            action="/admin/categories/delete/<%= category._id %>?_method=DELETE"
+                                                            method="POST" class="d-inline">
+                                                            <button type="submit" class="btn btn-danger btn-sm mb-1"
+                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                                                <i class="fas fa-trash"></i> Xóa
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">Không có danh mục nào.
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable({
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+                "zeroRecords": "Không tìm thấy kết quả phù hợp",
+                "info": "Hiển thị trang _PAGE_ / _PAGES_",
+                "infoEmpty": "Không có dữ liệu",
+                "infoFiltered": "(lọc từ _MAX_ bản ghi)",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "first": "Đầu tiên",
+                    "last": "Cuối cùng",
+                    "next": "Tiếp theo",
+                    "previous": "Trước đó"
+                }
+            },
+            "columnDefs": [
+                { targets: '_all', defaultContent: '' }
+            ],
+            "retrieve": true,
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "responsive": true
+        });
+    });
+</script>

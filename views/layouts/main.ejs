@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> | Shop Bán Hàng
+    </title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Footer CSS -->
+    <link rel="stylesheet" href="/css/footer.css">
+    <!-- Custom CSS for fixed image sizes -->
+    <link rel="stylesheet" href="/css/custom.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <%- include('../partials/header') %>
+
+        <!-- Flash Messages -->
+        <%- include('../partials/messages') %>
+
+            <!-- Main Content -->
+            <main class="container py-4">
+                <%- body %>
+            </main>
+
+            <!-- Footer -->
+            <%- include('../partials/footer') %>
+
+                <!-- Bootstrap Bundle with Popper -->
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                <!-- jQuery -->
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <!-- Custom JS -->
+                <script src="/js/main.js"></script>
+
+                <script>
+                    // Kiểm tra xem nội dung có ngắn hơn chiều cao màn hình không
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const bodyHeight = document.body.offsetHeight;
+                        const windowHeight = window.innerHeight;
+
+                        if (bodyHeight < windowHeight) {
+                            document.body.classList.add('has-short-content');
+                        }
+                    });
+                </script>
+</body>
+
+</html>

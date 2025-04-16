@@ -1,0 +1,246 @@
+<%- contentFor('body') %>
+
+    <div class="container-fluid">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="h3 mb-0 text-gray-800">Thống Kê Doanh Thu</h2>
+                <div class="mt-2">
+                    <a href="/admin" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bộ lọc -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Bộ lọc</h5>
+            </div>
+            <div class="card-body">
+                <form action="/admin/revenue" method="GET">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="year" class="form-label">Năm</label>
+                            <select name="year" id="year" class="form-select">
+                                <% years.forEach(y=> { %>
+                                    <option value="<%= y %>" <%=year===y ? 'selected' : '' %>><%= y %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="startMonth" class="form-label">Từ tháng</label>
+                            <select name="startMonth" id="startMonth" class="form-select">
+                                <% for(let i=1; i <=12; i++) { %>
+                                    <option value="<%= i %>" <%=startMonth===i ? 'selected' : '' %>><%= i %>
+                                    </option>
+                                    <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="endMonth" class="form-label">Đến tháng</label>
+                            <select name="endMonth" id="endMonth" class="form-select">
+                                <% for(let i=1; i <=12; i++) { %>
+                                    <option value="<%= i %>" <%=endMonth===i ? 'selected' : '' %>><%= i %>
+                                    </option>
+                                    <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-12 text-end">
+                            <button type="submit" class="btn btn-primary">Lọc dữ liệu</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Thống kê tổng quan -->
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Doanh thu theo tháng</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="revenueChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Phân tích doanh thu</h5>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="text-center mb-3">Doanh thu theo phương thức thanh toán</h5>
+                        <canvas id="paymentMethodChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tổng doanh thu -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Tổng doanh thu</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-12">
+                        <h2 class="text-success">
+                            <%= totalRevenue.toLocaleString('vi-VN') %>₫
+                        </h2>
+                        <p class="text-muted">Tổng doanh thu từ tháng <%= startMonth %> đến tháng <%= endMonth %> năm
+                                    <%= year %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm bán chạy -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Top 5 sản phẩm bán chạy</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Sản phẩm</th>
+                                <th class="text-center">Số lượng bán</th>
+                                <th class="text-end">Doanh thu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(topProducts && topProducts.length> 0) { %>
+                                <% topProducts.forEach((product, index)=> { %>
+                                    <tr>
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td>
+                                            <%= product.productName %>
+                                        </td>
+                                        <td class="text-center">
+                                            <%= product.totalQuantity %>
+                                        </td>
+                                        <td class="text-end">
+                                            <%= product.totalAmount.toLocaleString('vi-VN') %>₫
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="4" class="text-center">Chưa có dữ liệu</td>
+                                            </tr>
+                                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dữ liệu doanh thu theo tháng
+            const monthLabels = <% - monthLabels %>;
+            const monthlyData = <% - monthlyData %>;
+
+            // Vẽ biểu đồ doanh thu theo tháng
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            const revenueChart = new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: monthLabels,
+                    datasets: [{
+                        label: 'Doanh thu (VND)',
+                        data: monthlyData,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Doanh thu theo tháng'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                // Định dạng số theo VND
+                                callback: function (value) {
+                                    return value.toLocaleString('vi-VN') + 'đ';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Dữ liệu doanh thu theo phương thức thanh toán
+            const paymentMethodData = <% - paymentMethodData %>;
+
+            // Vẽ biểu đồ doanh thu theo phương thức thanh toán
+            const paymentMethodCtx = document.getElementById('paymentMethodChart').getContext('2d');
+            const paymentMethodChart = new Chart(paymentMethodCtx, {
+                type: 'pie',
+                data: {
+                    labels: paymentMethodData.labels,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: paymentMethodData.data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.5)',
+                            'rgba(54, 162, 235, 0.5)',
+                            'rgba(255, 206, 86, 0.5)',
+                            'rgba(75, 192, 192, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    let value = context.raw;
+                                    value = value.toLocaleString('vi-VN') + 'đ';
+                                    return label + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>

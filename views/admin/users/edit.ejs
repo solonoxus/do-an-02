@@ -1,0 +1,112 @@
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="h3 mb-0 text-gray-800">Chỉnh Sửa Người Dùng</h2>
+            <div class="mt-2">
+                <a href="/admin/users/<%= user._id %>" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Thông tin người dùng</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/users/edit/<%= user._id %>" method="POST">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Họ tên <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    value="<%= user.email %>" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="password" class="form-label">Mật khẩu mới</label>
+                                <input type="password" class="form-control" id="password" name="password" minlength="6">
+                                <small class="text-muted">Để trống nếu không muốn thay đổi. Mật khẩu phải có ít nhất 6
+                                    ký tự.</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="confirmPassword" class="form-label">Xác nhận mật khẩu mới</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                    value="<%= user.phone %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="role" class="form-label">Vai trò <span class="text-danger">*</span></label>
+                                <select class="form-select" id="role" name="role" required <%=!currentUser.isAdmin
+                                    ? 'disabled' : '' %>>
+                                    <% roles.forEach(r=> { %>
+                                        <option value="<%= r %>" <%=user.role===r ? 'selected' : '' %>>
+                                            <%= r==='user' ? 'Người dùng' : r==='staff' ? 'Nhân viên' : r==='manager'
+                                                ? 'Quản lý' : r==='admin' ? 'Quản trị viên' : 'Super Admin' %>
+                                        </option>
+                                        <% }); %>
+                                </select>
+                                <% if(!currentUser.isAdmin) { %>
+                                    <input type="hidden" name="role" value="<%= user.role %>">
+                                    <small class="text-muted">Bạn không có quyền thay đổi vai trò.</small>
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">Thông tin địa chỉ</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="street" class="form-label">Đường/Số nhà</label>
+                                <input type="text" class="form-control" id="street" name="street"
+                                    value="<%= user.address?.street || '' %>">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="city" class="form-label">Thành phố</label>
+                                <input type="text" class="form-control" id="city" name="city"
+                                    value="<%= user.address?.city || '' %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="state" class="form-label">Tỉnh/Thành</label>
+                                <input type="text" class="form-control" id="state" name="state"
+                                    value="<%= user.address?.state || '' %>">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="zipCode" class="form-label">Mã bưu điện</label>
+                                <input type="text" class="form-control" id="zipCode" name="zipCode"
+                                    value="<%= user.address?.zipCode || '' %>">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="country" class="form-label">Quốc gia</label>
+                                <input type="text" class="form-control" id="country" name="country"
+                                    value="<%= user.address?.country || 'Việt Nam' %>">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary">Cập nhật thông tin</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

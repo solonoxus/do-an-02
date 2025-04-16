@@ -1,0 +1,96 @@
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="h3 mb-0 text-gray-800">Thêm Người Dùng Mới</h2>
+            <div class="mt-2">
+                <a href="/admin/users" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Thông tin người dùng</h5>
+                </div>
+                <div class="card-body">
+                    <% if(typeof errors !='undefined' && errors.length> 0) { %>
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                <% errors.forEach(error=> { %>
+                                    <li>
+                                        <%= error.msg %>
+                                    </li>
+                                    <% }); %>
+                            </ul>
+                        </div>
+                        <% } %>
+
+                            <form action="/admin/users/add" method="POST">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="name" class="form-label">Họ tên <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            value="<%= typeof name != 'undefined' ? name : '' %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email <span
+                                                class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            value="<%= typeof email != 'undefined' ? email : '' %>" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="password" class="form-label">Mật khẩu <span
+                                                class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                            minlength="6" required>
+                                        <small class="text-muted">Mật khẩu phải có ít nhất 6 ký tự</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="confirmPassword" class="form-label">Xác nhận mật khẩu <span
+                                                class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                            name="confirmPassword" minlength="6" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="phone" class="form-label">Số điện thoại</label>
+                                        <input type="tel" class="form-control" id="phone" name="phone"
+                                            value="<%= typeof phone != 'undefined' ? phone : '' %>">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="role" class="form-label">Vai trò <span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-select" id="role" name="role" required>
+                                            <option value="">-- Chọn vai trò --</option>
+                                            <% roles.forEach(r=> { %>
+                                                <option value="<%= r %>" <%=typeof role !='undefined' && role===r
+                                                    ? 'selected' : '' %>>
+                                                    <%= r==='user' ? 'Người dùng' : r==='staff' ? 'Nhân viên' :
+                                                        r==='manager' ? 'Quản lý' : r==='admin' ? 'Quản trị viên'
+                                                        : 'Super Admin' %>
+                                                </option>
+                                                <% }); %>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                    <button type="reset" class="btn btn-outline-secondary me-md-2">Làm lại</button>
+                                    <button type="submit" class="btn btn-primary">Tạo người dùng</button>
+                                </div>
+                            </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
